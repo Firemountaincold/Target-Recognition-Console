@@ -291,13 +291,13 @@ namespace Target_Recognition_Console
             {
                 dot++;
                 CarDetection();
-                output("已分析" + dot.ToString() + "帧图像。", 1);
-            }
+                output("帧" + dot.ToString() + "：目标数量为" + textBoxnum.Text + "。", 1);
+            } 
             else if (isfacestart)
             {
                 dot++;
                 FaceDetection();
-                output("已分析" + dot.ToString() + "帧图像。", 1);
+                output("帧" + dot.ToString() + "：目标数量为" + textBoxnum.Text + "。", 1);
             }
             else
             {
@@ -401,6 +401,12 @@ namespace Target_Recognition_Console
                         else
                         {
                             Dlib.DrawRectangle(img, rect, new RgbPixel(0, 0, 255), 3);
+                        }
+                        var shape = shapePredictor.Detect(img, rect);
+                        // 简单绘制识别到的特征（用线连起来）
+                        for (uint i = 1; i < shape.Parts; i++)
+                        {
+                            Dlib.DrawLine(img, shape.GetPart(i), shape.GetPart(i - 1), new RgbPixel { Green = 255 });
                         }
                     }
                     numOfCarDetected = dets.Count();
