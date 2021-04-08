@@ -1,6 +1,6 @@
 # Target-Recognition-Console
 基于Dlib的人脸识别和目标识别软件。  
-[下载程序](https://github.com/Firemountaincold/Target-Recognition-Console/blob/main/TRC.rar)
+[下载程序](https://github.com/Firemountaincold/Target-Recognition-Console/blob/main/TRC.rar)   
 [下载模型](https://github.com/Firemountaincold/Target-Recognition-Console/blob/main/module.rar)
 ## 方法：
 用Aforge操作摄像头。    
