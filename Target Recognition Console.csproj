@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <RootNamespace>Target_Recognition_Console</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Network Statistics.ico</ApplicationIcon>
@@ -17,13 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AForge" Version="2.2.5" />
     <PackageReference Include="AForge.Controls" Version="2.2.5" />
-    <PackageReference Include="AForge.Imaging" Version="2.2.5" />
-    <PackageReference Include="AForge.Math" Version="2.2.5" />
-    <PackageReference Include="AForge.Video" Version="2.2.5" />
     <PackageReference Include="AForge.Video.DirectShow" Version="2.2.5" />
-    <PackageReference Include="AForge.Vision" Version="2.2.5" />
     <PackageReference Include="DlibDotNet.CUDA111" Version="19.21.0.20210302" />
   </ItemGroup>
 
