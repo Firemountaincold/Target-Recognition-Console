@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Data;
 using System.Threading;
+using System.Collections;
 
 namespace Target_Recognition_Console
 {
@@ -16,7 +17,7 @@ namespace Target_Recognition_Console
         private VideoCaptureDevice captureDevice;  //摄像头设备
         private VideoCapabilities[] videoCapabilities;  //摄像头能力列表
         private VideoCapabilities videoCapabilitie;  //单一摄像头能力（分辨率等）
-        public bool isface = true;
+        public bool isface = false;
         public bool isfacestart = false;
         public bool iscarstart = false;
         public bool isyolostart = false;
@@ -25,6 +26,15 @@ namespace Target_Recognition_Console
         public Box box = new Box();
         public int dot = 0;
         public int yolopic = 0;
+        public string videoFilePath;
+        public string imgFilePath;
+        public string imgFolderPath;
+        public string[] imglist;
+        public bool isimg = false;
+        public bool isimgfile = false;
+        public bool isplay = false;
+        public int photo = 1;
+
         public MainForm()
         {
             InitializeComponent();
@@ -136,6 +146,41 @@ namespace Target_Recognition_Console
                 buttonphoto.Enabled = false;
                 comboBoxreso.Enabled = true;
                 comboBoxcam.Enabled = true;
+            }
+        }
+
+        private void buttonopenvideo_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "视频文件(*.avi;*.mp4)|*.avi;*.mp4";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                videoFilePath = openFileDialog.FileName;
+                output("已载入视频：" + Path.GetFileName(videoFilePath), 1);
+            }
+        }
+
+        private void buttonplayvideo_Click(object sender, EventArgs e)
+        {
+            // 活体对应视频路径的文件作为视频源
+            FileVideoSource videoSource = new FileVideoSource(videoFilePath);
+            videoSourcePlayer.VideoSource = videoSource;
+            videoSourcePlayer.Start();
+            output("已开始播放。", 1);
+            buttonphoto.Enabled = true;
+            isplay = true;
+        }
+
+        private void buttonpause_Click(object sender, EventArgs e)
+        {
+            if (isplay)
+            {
+                videoSourcePlayer.SignalToStop();
+                videoSourcePlayer.WaitForStop();
+            }
+            else
+            {
+                MessageBox.Show("没有正在播放的视频！");
             }
         }
 
@@ -388,6 +433,66 @@ namespace Target_Recognition_Console
             }
             output("已加载摄像头列表。", 1);
             timer.Start();
+        }
+
+        private void buttonsavephoto_Click(object sender, EventArgs e)
+        {
+            if (pictureBoxphoto.Image != null)
+            {
+                Image img = pictureBoxphoto.Image;
+                string path = Path.Combine(Application.StartupPath, DateTime.Now.DayOfYear.ToString() + "-" + photo.ToString() + ".jpeg");
+                img.Save(path,System.Drawing.Imaging.ImageFormat.Jpeg);
+                output("已保存图片至" + path, 1);
+                photo++;
+            }
+            else
+            {
+                MessageBox.Show("没有可保存的照片！");
+            }
+        }
+
+        private void buttonopenimg_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "图片文件(*.jpg;*.jpeg)|*.jpg;*.jpeg";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                imgFilePath = openFileDialog.FileName;
+                output("已载入图片：" + Path.GetFileName(imgFilePath), 1);
+                labelopen.Text = "图片";
+                pictureBox.Image = Image.FromFile(imgFilePath);
+            }
+        }
+
+        private void buttonopeniimgf_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.ShowNewFolderButton = false;
+            folderBrowserDialog.Description = "请选择包含图片的文件夹。";
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+            {
+                imgFolderPath = folderBrowserDialog.SelectedPath;
+                output("已载入文件夹：" + Path.GetDirectoryName(imgFilePath), 1);
+                labelopen.Text = "文件夹";
+                imglist = GetFiles(imgFolderPath);
+                pictureBox.Image = Image.FromFile(imglist[0]); 
+            }
+        }
+
+        public string[] GetFiles(string dir)
+        {
+            string[] files = Directory.GetFiles(dir);
+            ArrayList alst = new ArrayList();
+            foreach (string file in files)
+            {
+                string exname = file.Substring(file.LastIndexOf(".") + 1);
+                if (".jpg|.jpeg".IndexOf(file.Substring(file.LastIndexOf(".") + 1)) > -1)
+                {
+                    FileInfo fi = new FileInfo(file);
+                    alst.Add(fi.FullName);
+                }
+            }
+            return (string[])alst.ToArray(typeof(string));
         }
     }
 }
