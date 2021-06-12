@@ -5,7 +5,7 @@ namespace Target_Recognition_Console
 {
     public class YoloWrapper : IDisposable
     {
-        private const string YoloLibraryName = @".\Dll\yolo_cpp_dll.dll";
+        private const string YoloLibraryName = @"C:\software\TRC\Dll\yolo_cpp_dll.dll";
         //调用dll
         [DllImport(YoloLibraryName, EntryPoint = "init")]
         private static extern int InitializeYolo(string configurationFilename, string weightsFilename, int gpu);
@@ -15,16 +15,19 @@ namespace Target_Recognition_Console
         private static extern int DetectImage(IntPtr pArray, int nSize, ref BboxContainer container);
         [DllImport(YoloLibraryName, EntryPoint = "dispose")]
         private static extern int DisposeYolo();
+
         public YoloWrapper(string configurationFilename, string weightsFilename, int gpu)
         {
             //初始化
             InitializeYolo(configurationFilename, weightsFilename, gpu);
         }
+
         public void Dispose()
         {
             //关闭
             DisposeYolo();
         }
+
         public BoundingBox[] Detect(string filename)
         {
             //目标检测
@@ -32,6 +35,7 @@ namespace Target_Recognition_Console
             var count = DetectImage(filename, ref container);
             return container.candidates;
         }
+
         public BoundingBox[] Detect(byte[] imageData)
         {
             //目标检测
@@ -47,7 +51,7 @@ namespace Target_Recognition_Console
                     throw new NotSupportedException($"{YoloLibraryName} has no OpenCV support");
                 }
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 return null;
             }

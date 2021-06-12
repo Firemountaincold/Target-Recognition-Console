@@ -83,7 +83,7 @@ namespace Target_Recognition_Console
                 {
                     // 检测目标
                     var dets = net.Operator(img).First();
-
+                    
                     // 遍历检测到的目标区域
                     foreach (var d in dets)
                     {
@@ -110,6 +110,32 @@ namespace Target_Recognition_Console
                         }
                     }
                     numOfCarDetected = dets.Count();
+                }
+                return BitmapExtensions.ToBitmap<RgbPixel>(img);
+            }
+            return image;
+        }
+
+        public Bitmap TargetDetection(Bitmap image, out int num)
+        {
+            num = 0;
+            if (image != null)
+            {
+                Matrix<RgbPixel> img = BitmapExtensions.ToMatrix<RgbPixel>(image);
+                using (var net = LossMmod.Deserialize(carDataPath))
+                {
+                    while (img.Size < 1800 * 1800)
+                        Dlib.PyramidUp(img);
+
+                    using (var dets = net.Operator(img, 1))
+                    {
+                        foreach (var det in dets)
+                        {
+                            foreach (var d in det)
+                                Dlib.DrawRectangle(img, d, new RgbPixel(255, 0, 0), 3);
+                        }
+                        num = dets.Count();
+                    }
                 }
                 return BitmapExtensions.ToBitmap<RgbPixel>(img);
             }

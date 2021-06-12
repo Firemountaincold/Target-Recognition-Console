@@ -8,17 +8,19 @@ namespace Target_Recognition_Console
 {
     public class Box
     {
-        private const string configurationFilename = @".\Cfg\yolov4.cfg";
-        private const string weightsFilename = @".\Weights\yolov4.weights";
-        private const string namesFile = @".\Data\coco.names";
+        private const string configurationFilename = @"C:\software\TRC\Cfg\yolov4.cfg";
+        private const string weightsFilename = @"C:\software\TRC\Weights\yolov3.weights";
+        private const string namesFile = @"C:\software\TRC\Data\coco.names";
         private static Dictionary<int, string> _namesDic = new Dictionary<int, string>();
         private static YoloWrapper _wrapper;
 
         public void Initilize()
         {
             //初始化
-            _wrapper = new YoloWrapper(configurationFilename, weightsFilename, 0);
-
+            int gpu = 0;
+            Console.WriteLine(configurationFilename);
+            Console.WriteLine(weightsFilename);
+            _wrapper = new YoloWrapper(configurationFilename, weightsFilename, gpu);
             var lines = File.ReadAllLines(namesFile);
             for (var i = 0; i < lines.Length; i++)
             {
